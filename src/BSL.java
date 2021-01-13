@@ -7,7 +7,6 @@ public class BSL {
 	//the memory stack
 	private LRUCache memory;
 	private long BSLSize;
-	private long lastUpdate;
 	//the M head records
 	private int M;
 	//new inserting number
@@ -16,7 +15,6 @@ public class BSL {
 	{
 		BSLSize=bslSize;
 		memory=new LRUCache(BSLSize);
-		lastUpdate=0;
 		M=1000;
 	}
 
@@ -31,8 +29,6 @@ public class BSL {
 			tmp.setLastaccess(timestamp);
 		}
 		//not found
-
-		checkUpdate(timestamp);
 		return result;
 	}
 
@@ -44,32 +40,27 @@ public class BSL {
 	 * 4. update p(in CSPAgent)
 	 * 5. reset v(in CSPAgent)
 	 *
-	 * @param timestamp
 	 */
-	private void checkUpdate(long timestamp)
+	public void updateBSL()
 	{
-		if((timestamp-lastUpdate)>MyConf.UPDATE_PERIOD){
 			//1.
 			M=2*newPutNum;
 			newPutNum=0;
-			//2. sort the first M nodes
-			LinkedList mList=new LinkedList();
-
-			LRUCache.Node node= memory.getHead();
-			for (int i=0;i<M;i++){
-				node=node.after;
-				if (node== memory.getTail()){
-					return;
-				}
-
-
-			}
-
-		}
+			//2~3. sort the first M nodes
+			memory.sortM_ByPop(M);
 	}
 
-	public void put(int id,int size,long timestamp,float popularity){
-		memory.put(id,size,timestamp,popularity);
+	/**
+	 * put a new file into cache.
+	 * this may occur a replacement, right or not?
+	 * @param id
+	 * @param size
+	 * @param timestamp
+	 * @param popularity
+	 * @return return the popularity of file that is replaced(0 for not occur replacement)
+	 */
+	public float put(int id,int size,long timestamp,float popularity){
 		newPutNum++;
+		return memory.put(id,size,timestamp,popularity);
 	}
 }

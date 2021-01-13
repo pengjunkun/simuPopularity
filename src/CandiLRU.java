@@ -6,11 +6,9 @@ import java.util.Map;
  */
 public class CandiLRU extends LinkedHashMap<Integer,CacheFile>
 {
-	//by default, save 10000 traces
-	private static final int COUNT = 10000;
 	public CandiLRU()
 	{
-		super(COUNT,0.75f,true);
+		super(MyConf.CANDIDATES_NUM,0.75f,true);
 	}
 
 	/**
@@ -36,9 +34,10 @@ public class CandiLRU extends LinkedHashMap<Integer,CacheFile>
 
 	}
 
+
 	@Override protected boolean removeEldestEntry(
 			Map.Entry<Integer, CacheFile> eldest)
 	{
-		return size()>COUNT;
+		return size()>MyConf.CANDIDATES_NUM;
 	}
 }
