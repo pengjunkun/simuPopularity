@@ -10,7 +10,7 @@ public class Client
 	private CDS cds;
 	private String filePath;
 	private int count;
-	private long totalLatency;
+	private double totalLatency;
 	private long lastReport;
 
 	public Client(String filePath)
@@ -23,7 +23,10 @@ public class Client
 
 	private void sendRequest(int id, long timestamp)
 	{
-		totalLatency += cds.requestContent(id, timestamp);
+		float res = cds.requestContent(id, timestamp);
+//		if (timestamp % 21187 == 0)
+//			System.out.println("latency: " + res);
+		totalLatency += res;
 		checkReport(timestamp);
 	}
 
@@ -70,10 +73,16 @@ public class Client
 	{
 		System.out.println("==============report============");
 		System.out.println("sent: " + count);
-		System.out.println("total time: " + totalLatency);
+		System.out.println("cache capacity(entry number): " + MyConf.BSL_SIZE/MyConf.FILE_SIZE);
+		if (count != 0)
+			System.out .println("hited: "+cds.getHit_num()+" ;hit ratio: " + (cds.getHit_num() * 1.0 / count));
+		System.out.println("total latency: " + totalLatency + "ms");
+		System.out.println(
+				"throughput: " + (count * MyConf.FILE_SIZE / 3600) + "KB/s");
 		System.out.println("==============report============");
 		count = 0;
 		totalLatency = 0;
+		cds.setHit_num(0);
 	}
 
 	public void run()
@@ -86,9 +95,8 @@ public class Client
 		if ((timestamp - lastReport) > MyConf.REPORT_PERIOD)
 		{
 			report();
-			lastReport=timestamp;
+			lastReport = timestamp;
 		}
 	}
-
 
 }

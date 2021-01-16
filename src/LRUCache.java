@@ -1,187 +1,71 @@
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * Created by JackPeng(pengjunkun@gmail.com) on 2021/1/12.
+ * Created by JackPeng(pengjunkun@gmail.com) on 2021/1/15.
  */
-class LRUCache
+public class LRUCache extends LinkedHashMap<Integer, CacheFile>
 {
 	private long capacity;
 
 	private long usedSize = 0;
 
-	class Node
+	private int requested;
+	private int hited;
+
+	public LRUCache(long initialCapacity)
 	{
-		int key;
-		CacheFile file;
-		Node before;
-		Node after;
+		super(100, 0.75F, true);
+		capacity = initialCapacity;
 	}
 
-	private HashMap<Integer, Node> hashMap = new HashMap<Integer, Node>();
-	private Node head, tail;
-
-	public LRUCache(long capacity)
+	@Override public CacheFile get(Object key)
 	{
-		this.capacity = capacity;
-
-		head = new Node();
-		head.before = null;
-
-		tail = new Node();
-		tail.after = null;
-
-		head.after = tail;
-		tail.before = head;
+		requested += 1;
+		if (super.get(key) != null)
+		{
+			hited += 1;
+			//			MyLog.jack("hited key:" + key+",have "+size());
+		}
+		return null;
 	}
 
-
-	/**
-	 * in our logic, head is the eldest node
-	 *
-	 * @return
-	 */
-	private Node popHead()
+	@Override public CacheFile put(Integer key, CacheFile value)
 	{
-		Node res = head.after;
-		unlink(res);
+
+		usedSize += value.getSize();
+		return super.put(key, value);
+	}
+
+	@Override protected boolean removeEldestEntry(
+			Map.Entry<Integer, CacheFile> eldest)
+	{
+		boolean res = usedSize > capacity;
+		if (res)
+		{
+			usedSize -= eldest.getValue().getSize();
+		}
 		return res;
 	}
 
-	private void addToTail(Node node)
+	public void report()
 	{
-		node.after = tail;
-		node.before = tail.before;
-		tail.before.after = node;
-		tail.before = node;
-	}
-
-	private void moveToTail(Node node)
-	{
-		unlink(node);
-		addToTail(node);
-	}
-
-	public CacheFile get(int key)
-	{
-		Node node = hashMap.get(key);
-		if (node == null)
+		if (requested != 0)
 		{
-			return null;
+			MyLog.jack("-------------LRU report-------------");
+			System.out.println("sent: " + requested);
+			System.out.println("cache capacity(entry number): "
+					+ MyConf.BSL_SIZE / MyConf.FILE_SIZE);
+			if (requested != 0)
+				System.out.println(
+						"hited: " + hited + " ;hit ratio: " + (hited * 1.0
+								/ requested));
+			MyLog.jack("-------------LRU report-------------");
 		}
-		moveToTail(node);
-		return node.file;
 	}
 
-	/**
-	 * @param key
-	 * @param size
-	 * @param timestamp
-	 * @param popualrity
-	 * @return return the popularity of file that is replaced(0 for not occur replacement)
-	 */
-	public float put(int key, int size, long timestamp, float popualrity) {
-		float result=0;
-		Node node = hashMap.get(key);
-		if (node == null) {
-			//check the size firstly
-			if (usedSize+size>capacity){
-				Node head=this.popHead();
-				Node removedNode=hashMap.remove(head.key);
-				result=removedNode.file.getPopularity();
-			}
-			Node newNode = new Node();
-			newNode.key = key;
-			newNode.file=new CacheFile(key,size,timestamp,popualrity);
-			hashMap.put(key, newNode);
-			addToTail(newNode);
-			usedSize+=size;
-		} else {
-			//if already exists
-			get(key);
-		}
-		return result;
-	}
-
-	private void unlink(Node node)
+	public static void unitTest()
 	{
-		Node before = node.before;
-		Node after = node.after;
-		before.after = after;
-		after.before = before;
-	}
-
-	/**
-	 *
-	 * @param flagNode the node which you want follow
-	 * @param insertNode the node which you want insert into list
-	 */
-	private void inserAfter(Node flagNode,Node insertNode){
-		insertNode.before=flagNode;
-		insertNode.after= flagNode.after;
-		flagNode.after.before=insertNode;
-		flagNode.after=insertNode;
-	}
-
-	/**
-	 * write a Select-Sort algorithm by hand
-	 * tail_____not need to sort____|M|____unsorted_____|uNode|aNode|____already sorted____|head
-	 */
-	public void sortM_ByPop(int M){
-		//A stands for the number of already sorted nodes
-		int A=0;
-		//aNode stands for the last sorted node(see in pic above)
-		//uNode stands for the first unsorted node(see in above pic)
-		Node aNode=head;
-		Node uNode=head.after;
-		while (A<M){
-			if (uNode==tail)
-				break;
-			Node minNode=findMin(M-A,uNode);
-			unlink(minNode);
-			inserAfter(aNode,minNode);
-			aNode=minNode;
-			A++;
-			if (aNode==uNode)
-				uNode=aNode.after;
-		}
-
-	}
-
-	/**
-	 * find the min popularity Node in the next 'count' nodes, which need (count-1) comparation.
-	 * @param count
-	 * @param startNode
-	 * @return
-	 */
-	private Node findMin(int count,Node startNode){
-		Node result=startNode;
-		Node nextNode=startNode.after;
-		for (int i=1;i<count;i++){
-			if (nextNode==tail)
-				break;
-			if (nextNode.file.getPopularity()<result.file.getPopularity())
-				result=nextNode;
-
-			nextNode=nextNode.after;
-		}
-		return result;
-
-	}
-
-	/**
-	 * for debug use
-	 */
-	public void printAll(){
-		Node node=head.after;
-		while (node!=tail){
-			System.out.println("id="+node.key+";pop="+node.file.getPopularity());
-			node=node.after;
-		}
-		System.out.println("------------");
-	}
-
-
-	public static void unitTest(){
 		LRUCache ln = new LRUCache(21);
 		ln.put(20, 0, 1, 20);
 		ln.put(18, 0, 1, 18);
@@ -204,9 +88,13 @@ class LRUCache
 		ln.put(16, 0, 1, 16);
 		ln.put(17, 0, 1, 17);
 
-		ln.printAll();
-		ln.sortM_ByPop(10);
-
-		ln.printAll();
+		ln.get(20);
 	}
+
+	private void put(int i, int i1, int i2, int i3)
+	{
+		usedSize += i1;
+		put(i, new CacheFile(i, i1, i2, i3));
+	}
+
 }

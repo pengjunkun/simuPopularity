@@ -7,4 +7,8 @@ public class MyUtil
 	{
 		return (float) (1+Math.exp(-MyConf.EXPON_LAMBDA*(timestamp-old_time))*old_pop);
 	}
+	public static float calNowPop(float old_pop, long old_time, long timestamp)
+	{
+		return (float) (Math.exp(-MyConf.EXPON_LAMBDA*(timestamp-old_time))*old_pop);
+	}
 }

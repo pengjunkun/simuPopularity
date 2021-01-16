@@ -10,20 +10,34 @@ public class CSPAgent
 
 	//threshold of admission
 	//in start, all the files will be cached
-	//after some replacement, the p will increase
-	private float p = 1;
+	//after some replacement, the p will change
+	private float p = 0.99F;
 	//value of correct replacement
 	private int v = 0;
+	private int requested = 0;
+	private int replaced = 0;
+
+	private LRUCache memory2;
+	private long lastReport;
 
 	public CSPAgent()
 	{
 		bsl = new BSL(MyConf.BSL_SIZE);
 		candidates = new CandiLRU();
+		memory2 = new LRUCache(MyConf.BSL_SIZE);
 	}
 
 	public boolean get(int id, long timestamp)
 	{
+		requested++;
 		boolean result = bsl.get(id, timestamp);
+
+		CacheFile tmp2 = memory2.get(id);
+		if (tmp2 == null)
+		{
+			memory2.put(id, new CacheFile(id, MyConf.FILE_SIZE, timestamp, 0));
+		}
+
 		//if not in BSL
 		if (!result)
 		{
@@ -31,13 +45,15 @@ public class CSPAgent
 			if (candidate_pop > p)
 			{
 				//remove candidate from candidates, because it has became a formal cache -_-
-				float oldPop = bsl.put(id, MyConf.FILE_SIZE, timestamp, candidate_pop);
+				float oldPop = bsl
+						.put(id, MyConf.FILE_SIZE, timestamp, candidate_pop);
 				candidates.remove(id);
 
 				//				System.out.println( "current p,file pop, replaced file pop: " + p + ", " + candidate_pop + ", " + oldPop);
 				//only calculate the replacement cases
-				if (oldPop != 0)
+				if (oldPop != -1)
 				{
+					replaced++;
 					if (oldPop < candidate_pop)
 						v++;
 					else
@@ -47,6 +63,7 @@ public class CSPAgent
 		}
 		//every request brings a check chance
 		checkUpdate(timestamp);
+		checkReport(timestamp);
 		return result;
 	}
 
@@ -63,28 +80,41 @@ public class CSPAgent
 		if ((timestamp - lastUpdate) > MyConf.UPDATE_PERIOD)
 		{
 			bsl.updateBSL();
+			float diff = (float) (v * 1.0 / replaced);
 			//4.
 			//v is too high, which means the threshold is too high.
-			System.out.println(
-					"in this " + MyConf.UPDATE_PERIOD + " seconds, v= " + v);
-			if (v > MyConf.Vh)
+			//to conservative
+			System.out.println("in this " + MyConf.UPDATE_PERIOD + " seconds");
+			MyLog.jack(
+					"request= " + requested + ",replaced=" + replaced + ", v= "
+							+ v + ", diff=" + diff);
+			if (diff > MyConf.Vh)
 			{
 				p *= MyConf.POP_DECREASE;
-//				if (p < 1)
-//					p = 1.0F;
+				if (p < 1)
+					p = 1.0F;
 			}
 			//v is too low, which means the threshold is too low
-			else if (v < -MyConf.Vl)
+			//too aggressive
+			else if (diff < -MyConf.Vl)
 			{
 				p *= MyConf.POP_INCREASE;
 			}
 			System.out.println("set p= " + p);
 			//5.
 			v = 0;
-
-			//update lastUpdate time
 			lastUpdate = timestamp;
+			requested = 0;
+			replaced = 0;
 		}
+	}
 
+	private void checkReport(long timestamp)
+	{
+		if ((timestamp - lastReport) > MyConf.REPORT_PERIOD)
+		{
+			memory2.report();
+			lastReport=timestamp;
+		}
 	}
 }

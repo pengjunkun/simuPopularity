@@ -1,21 +1,20 @@
-import java.util.*;
-
 /**
  * Created by JackPeng(pengjunkun@gmail.com) on 2021/1/12.
  */
 public class BSL {
 	//the memory stack
-	private LRUCache memory;
+	private MyCache memory;
 	private long BSLSize;
 	//the M head records
 	private int M;
 	//new inserting number
 	private int newPutNum=0;
+
 	public BSL(long bslSize)
 	{
 		BSLSize=bslSize;
-		memory=new LRUCache(BSLSize);
-		M=1000;
+		memory=new MyCache(BSLSize);
+		M=100;
 	}
 
 	public boolean get(int id,long timestamp)
@@ -45,6 +44,7 @@ public class BSL {
 	{
 			//1.
 			M=2*newPutNum;
+//			System.out.println("new M= "+M);
 			newPutNum=0;
 			//2~3. sort the first M nodes
 			memory.sortM_ByPop(M);
@@ -63,4 +63,5 @@ public class BSL {
 		newPutNum++;
 		return memory.put(id,size,timestamp,popularity);
 	}
+
 }

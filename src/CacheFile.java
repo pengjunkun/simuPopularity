@@ -17,6 +17,10 @@ public class CacheFile
 		this.popularity=popularity;
 	}
 
+	public int getSize()
+	{
+		return size;
+	}
 
 	public long getLastaccess()
 	{

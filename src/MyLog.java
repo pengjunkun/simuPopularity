@@ -7,7 +7,9 @@ import java.util.logging.*;
 public class MyLog
 {
 	public static Logger logger;
-	static {
+
+	static
+	{
 		logger = Logger.getLogger("clientLog");
 		FileHandler fh = null;
 		try
@@ -19,11 +21,20 @@ public class MyLog
 		}
 		fh.setLevel(Level.INFO);
 		fh.setFormatter(new SimpleFormatter());
-		ConsoleHandler ch=new ConsoleHandler();
+		ConsoleHandler ch = new ConsoleHandler();
 		ch.setLevel(Level.ALL);
 		ch.setFormatter(new SimpleFormatter());
 		logger.addHandler(fh);
 		logger.addHandler(ch);
 	}
 
+	public static void jack(String s)
+	{
+		System.out.println(s);
+	}
+
+	public static void jackJoint(String s)
+	{
+		System.out.print(s);
+	}
 }
