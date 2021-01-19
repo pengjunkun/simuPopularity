@@ -34,6 +34,20 @@ class MyCache
 		tail.before = head;
 	}
 
+	public void updateSize(long newCapacity)
+	{
+		while (newCapacity < usedSize)
+		{
+			removeOldest();
+		}
+		capacity = newCapacity;
+	}
+
+	public long getCapacity()
+	{
+		return capacity;
+	}
+
 	/**
 	 * in our logic, head is the eldest node
 	 *
@@ -74,6 +88,20 @@ class MyCache
 		return node.file;
 	}
 
+	public float getPopByIndex(int index)
+	{
+		Node node = head;
+		for (int i = 0; i < index; i++)
+		{
+			node = head.after;
+		}
+		if (node.file == null)
+			MyLog.jack("not change pop");
+
+		return node.file == null ? -1F : node.file.getPopularity();
+
+	}
+
 	/**
 	 * @param key
 	 * @param size
@@ -83,9 +111,9 @@ class MyCache
 	 */
 	public float put(int key, int size, long timestamp, float popualrity)
 	{
-//		if (usedSize==capacity)
-//			System.out.println("full now");
-//			return -1;
+		//		if (usedSize==capacity)
+		//			MyLog.jack("full now");
+		//			return -1;
 		float result = -1;
 		Node node = hashMap.get(key);
 		if (node == null)
@@ -93,13 +121,11 @@ class MyCache
 			//check the size firstly
 			if (usedSize + size > capacity)
 			{
-				Node popedNode = this.popHead();
-				usedSize -= popedNode.file.getSize();
-				Node removedNode = hashMap.remove(popedNode.key);
+				Node removedNode = removeOldest();
 				result = removedNode.file.getPopularity();
-				result=MyUtil .calNowPop(result, removedNode.file.getLastaccess(), timestamp);
-//				MyLog.jack("oldPop= " + result);
-
+				result = MyUtil
+						.calNowPop(result, removedNode.file.getLastaccess(),
+								timestamp);
 			}
 			Node newNode = new Node();
 			newNode.key = key;
@@ -107,12 +133,18 @@ class MyCache
 			hashMap.put(key, newNode);
 			addToTail(newNode);
 			usedSize += size;
-		} else
-		{
-			//if already exists
-			get(key);
 		}
+		if (timestamp == 1430673641)
+			MyLog.jack("" + timestamp);
 		return result;
+	}
+
+	private Node removeOldest()
+	{
+		Node popedNode = this.popHead();
+		usedSize -= popedNode.file.getSize();
+		Node removedNode = hashMap.remove(popedNode.key);
+		return removedNode;
 	}
 
 	private void unlink(Node node)
@@ -133,6 +165,19 @@ class MyCache
 		insertNode.after = flagNode.after;
 		flagNode.after.before = insertNode;
 		flagNode.after = insertNode;
+	}
+
+	public void updateHeadM(int M, long timestamp)
+	{
+		Node node = head;
+		for (int i = 0; i < M; i++)
+		{
+			node = node.after;
+			if (node == tail)
+				break;
+			node.file.setPopularity(MyUtil.calNowPop(node.file.getPopularity(),
+					node.file.getLastaccess(), timestamp));
+		}
 	}
 
 	/**
@@ -194,12 +239,11 @@ class MyCache
 		Node node = head.after;
 		while (node != tail)
 		{
-			//			System.out.println( "id=" + node.key + ";pop=" + node.file.getPopularity());
+			//			MyLog.jack( "id=" + node.key + ";pop=" + node.file.getPopularity());
 			MyLog.jackJoint(node.key + ",");
 			node = node.after;
 		}
-		MyLog.jack("");
-		System.out.println("------------");
+		MyLog.jack("------------");
 	}
 
 	public static void unitTest()

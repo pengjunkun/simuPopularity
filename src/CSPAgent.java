@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+
 /**
  * Created by JackPeng(pengjunkun@gmail.com) on 2021/1/13.
  */
@@ -12,19 +16,19 @@ public class CSPAgent
 	//in start, all the files will be cached
 	//after some replacement, the p will change
 	private float p = 0.99F;
-	//value of correct replacement
-	private int v = 0;
 	private int requested = 0;
 	private int replaced = 0;
+	private int v = 0;
+	//	private LinkedList<Integer> oldV;
 
 	private LRUCache memory2;
-	private long lastReport;
 
 	public CSPAgent()
 	{
 		bsl = new BSL(MyConf.BSL_SIZE);
 		candidates = new CandiLRU();
 		memory2 = new LRUCache(MyConf.BSL_SIZE);
+		//		oldV = new LinkedList<>();
 	}
 
 	public boolean get(int id, long timestamp)
@@ -49,23 +53,43 @@ public class CSPAgent
 						.put(id, MyConf.FILE_SIZE, timestamp, candidate_pop);
 				candidates.remove(id);
 
-				//				System.out.println( "current p,file pop, replaced file pop: " + p + ", " + candidate_pop + ", " + oldPop);
+				//				MyLog.jack("current p,candidate pop, replaced file pop: " + p + ", " + candidate_pop + ", " + oldPop);
 				//only calculate the replacement cases
 				if (oldPop != -1)
 				{
 					replaced++;
 					if (oldPop < candidate_pop)
+						//						addV(1);
 						v++;
 					else
+						//						addV(-1);
 						v--;
 				}
 			}
 		}
 		//every request brings a check chance
 		checkUpdate(timestamp);
-		checkReport(timestamp);
 		return result;
 	}
+
+	//	private void addV(int v)
+	//	{
+	//		oldV.add(v);
+	//		if (oldV.size() > MyConf.V_SIZE)
+	//		{
+	//			oldV.poll();
+	//		}
+	//	}
+	//
+	//	private int getTotalV()
+	//	{
+	//		int res = 0;
+	//		for (int v : oldV)
+	//		{
+	//			res += v;
+	//		}
+	//		return res;
+	//	}
 
 	/**
 	 * in one period, we have some tasks to do:
@@ -79,42 +103,65 @@ public class CSPAgent
 	{
 		if ((timestamp - lastUpdate) > MyConf.UPDATE_PERIOD)
 		{
-			bsl.updateBSL();
-			float diff = (float) (v * 1.0 / replaced);
+			bsl.updateBSL(timestamp);
+
+			//			float slopeByFreq = (float) (getTotalV() * 1.0 / MyConf.V_SIZE);
 			//4.
 			//v is too high, which means the threshold is too high.
 			//to conservative
-			System.out.println("in this " + MyConf.UPDATE_PERIOD + " seconds");
+			MyLog.jack("in this " + MyConf.UPDATE_PERIOD + " seconds");
 			MyLog.jack(
 					"request= " + requested + ",replaced=" + replaced + ", v= "
-							+ v + ", diff=" + diff);
-			if (diff > MyConf.Vh)
+							+ v);
+			//			if (slopeByFreq > MyConf.Vh)
+			if (v > MyConf.Vh||replaced<4)
 			{
+				//				float tempP = bsl.getMiddleThreshold();
+				//				if (Math.abs(tempP + 1) > 0.000001)
+				//					p = tempP;
+
 				p *= MyConf.POP_DECREASE;
 				if (p < 1)
 					p = 1.0F;
 			}
 			//v is too low, which means the threshold is too low
 			//too aggressive
-			else if (diff < -MyConf.Vl)
+			//			else if (slopeByFreq < -MyConf.Vl)
+			else if (v < -MyConf.Vl&&replaced>3)
 			{
 				p *= MyConf.POP_INCREASE;
+				//				float tempP = bsl.getMiddleThreshold();
+				//				if (Math.abs(tempP + 1) > 0.000001)
+				//					p = tempP;
+				//				if (p < 1)
+				//					p = 1.0F;
 			}
-			System.out.println("set p= " + p);
+			MyLog.jack("set p= " + p);
 			//5.
-			v = 0;
 			lastUpdate = timestamp;
 			requested = 0;
 			replaced = 0;
+			v = 0;
 		}
 	}
 
-	private void checkReport(long timestamp)
+	public void updateBSL_LRU_size()
 	{
-		if ((timestamp - lastReport) > MyConf.REPORT_PERIOD)
-		{
-			memory2.report();
-			lastReport=timestamp;
-		}
+		long newBslSize = bsl.updateSize();
+		MyConf.BSL_SIZE = newBslSize;
+		memory2.updateSize(newBslSize);
+		MyLog.jack(
+				"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~new BSL size: ");
+		MyLog.jack("" + newBslSize);
+		MyLog.writeSize("" + newBslSize);
+	}
+
+	public void lruReport()
+	{
+		memory2.report();
+	}
+
+	public void VReport()
+	{
 	}
 }

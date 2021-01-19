@@ -9,25 +9,24 @@ public class Client
 {
 	private CDS cds;
 	private String filePath;
-	private int count;
 	private double totalLatency;
 	private long lastReport;
 
 	public Client(String filePath)
 	{
 		this.filePath = filePath;
-		count = 0;
 		totalLatency = 0;
 		cds = new CDS();
+		lastReport=0;
 	}
 
 	private void sendRequest(int id, long timestamp)
 	{
 		float res = cds.requestContent(id, timestamp);
-//		if (timestamp % 21187 == 0)
-//			System.out.println("latency: " + res);
+		//		if (timestamp % 21187 == 0)
+		//			MyLog.jack("latency: " + res);
 		totalLatency += res;
-		checkReport(timestamp);
+		actionPeriod(timestamp);
 	}
 
 	private void readFileAndSent(String fPath)
@@ -47,7 +46,6 @@ public class Client
 				String id = oneLine.split(",")[4];
 				String timestamp = oneLine.split(",")[1];
 				sendRequest(Integer.parseInt(id), Long.parseLong(timestamp));
-				count++;
 				oneLine = bufferedReader.readLine();
 			}
 
@@ -64,25 +62,8 @@ public class Client
 	private void finalReport()
 	{
 		MyLog.logger.info("==========final report========");
-		MyLog.logger.info("sent: " + count);
 		MyLog.logger.info("total time: " + totalLatency);
 		MyLog.logger.info("==========final report========");
-	}
-
-	private void report()
-	{
-		System.out.println("==============report============");
-		System.out.println("sent: " + count);
-		System.out.println("cache capacity(entry number): " + MyConf.BSL_SIZE/MyConf.FILE_SIZE);
-		if (count != 0)
-			System.out .println("hited: "+cds.getHit_num()+" ;hit ratio: " + (cds.getHit_num() * 1.0 / count));
-		System.out.println("total latency: " + totalLatency + "ms");
-		System.out.println(
-				"throughput: " + (count * MyConf.FILE_SIZE / 3600) + "KB/s");
-		System.out.println("==============report============");
-		count = 0;
-		totalLatency = 0;
-		cds.setHit_num(0);
 	}
 
 	public void run()
@@ -90,11 +71,15 @@ public class Client
 		readFileAndSent(filePath);
 	}
 
-	private void checkReport(long timestamp)
+	private void actionPeriod(long timestamp)
 	{
-		if ((timestamp - lastReport) > MyConf.REPORT_PERIOD)
+
+		if ((timestamp - lastReport) >= MyConf.REPORT_PERIOD)
 		{
-			report();
+			cds.report();
+
+			cds.updateBSL_LRU_size();
+
 			lastReport = timestamp;
 		}
 	}

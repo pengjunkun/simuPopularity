@@ -1,51 +1,112 @@
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by JackPeng(pengjunkun@gmail.com) on 2021/1/15.
  */
-public class LRUCache extends LinkedHashMap<Integer, CacheFile>
+public class LRUCache
 {
 	private long capacity;
+	private HashMap<Integer, Node> hashMap;
 
 	private long usedSize = 0;
 
 	private int requested;
 	private int hited;
 
-	public LRUCache(long initialCapacity)
+	private Node head;
+	private Node tail;
+
+	class Node
 	{
-		super(100, 0.75F, true);
-		capacity = initialCapacity;
+		int key;
+		CacheFile file;
+		Node before;
+		Node after;
 	}
 
-	@Override public CacheFile get(Object key)
+	public LRUCache(long initialCapacity)
 	{
+		capacity = initialCapacity;
+		hashMap = new HashMap<>();
+
+		head = new Node();
+		head.before = null;
+
+		tail = new Node();
+		tail.after = null;
+
+		head.after = tail;
+		tail.before = head;
+	}
+
+	private Node popHead()
+	{
+		Node res = head.after;
+		unlink(res);
+		return res;
+	}
+
+	private void addToTail(Node node)
+	{
+		node.after = tail;
+		node.before = tail.before;
+		tail.before.after = node;
+		tail.before = node;
+	}
+
+	private void unlink(Node node)
+	{
+		Node before = node.before;
+		Node after = node.after;
+		before.after = after;
+		after.before = before;
+	}
+
+	private void moveToTail(Node node)
+	{
+		unlink(node);
+		addToTail(node);
+	}
+
+	public CacheFile get(Object key)
+	{
+		Node node = hashMap.get(key);
 		requested += 1;
-		if (super.get(key) != null)
+		if (node != null)
 		{
+			moveToTail(node);
 			hited += 1;
-			//			MyLog.jack("hited key:" + key+",have "+size());
 		}
+
 		return null;
 	}
 
-	@Override public CacheFile put(Integer key, CacheFile value)
+	private Node removeOldest()
 	{
-
-		usedSize += value.getSize();
-		return super.put(key, value);
+		Node popedNode = this.popHead();
+		usedSize -= popedNode.file.getSize();
+		Node removedNode = hashMap.remove(popedNode.key);
+		return removedNode;
 	}
 
-	@Override protected boolean removeEldestEntry(
-			Map.Entry<Integer, CacheFile> eldest)
+	public void put(Integer key, CacheFile value)
 	{
-		boolean res = usedSize > capacity;
-		if (res)
+		Node node = hashMap.get(key);
+		if (node == null)
 		{
-			usedSize -= eldest.getValue().getSize();
+			//check the size firstly
+			while (usedSize + value.getSize() > capacity)
+				removeOldest();
+			Node newNode = new Node();
+			newNode.key = key;
+			newNode.file = value;
+			hashMap.put(key, newNode);
+			addToTail(newNode);
+			usedSize += value.getSize();
 		}
-		return res;
 	}
 
 	public void report()
@@ -53,14 +114,17 @@ public class LRUCache extends LinkedHashMap<Integer, CacheFile>
 		if (requested != 0)
 		{
 			MyLog.jack("-------------LRU report-------------");
-			System.out.println("sent: " + requested);
-			System.out.println("cache capacity(entry number): "
+			MyLog.jack("sent: " + requested);
+			MyLog.jack("cache capacity(entry number): "
 					+ MyConf.BSL_SIZE / MyConf.FILE_SIZE);
 			if (requested != 0)
-				System.out.println(
-						"hited: " + hited + " ;hit ratio: " + (hited * 1.0
-								/ requested));
+				MyLog.jack("hited: " + hited + " ;hit ratio: ");
+			float ratio = (float) (hited * 1.0 / requested);
+			MyLog.jack("" + ratio);
+			MyLog.writeLRUHit("" + ratio);
 			MyLog.jack("-------------LRU report-------------");
+			requested = 0;
+			hited = 0;
 		}
 	}
 
@@ -97,4 +161,10 @@ public class LRUCache extends LinkedHashMap<Integer, CacheFile>
 		put(i, new CacheFile(i, i1, i2, i3));
 	}
 
+	public void updateSize(long newSize)
+	{
+		while (usedSize > newSize)
+			removeOldest();
+		capacity = newSize;
+	}
 }

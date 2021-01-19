@@ -9,21 +9,12 @@ public class CDS
 	private CSPAgent agent;
 	private Random random;
 	private int hit_num;
+	private int requested;
 
 	public CDS()
 	{
 		agent = new CSPAgent();
 		random = new Random();
-	}
-
-	public int getHit_num()
-	{
-		return hit_num;
-	}
-
-	public void setHit_num(int hit_num)
-	{
-		this.hit_num = hit_num;
 	}
 
 	/**
@@ -34,6 +25,7 @@ public class CDS
 	 */
 	public float requestContent(int id, long timestamp)
 	{
+		requested++;
 		int latency = 0;
 		//hit
 		if (agent.get(id, timestamp))
@@ -59,5 +51,35 @@ public class CDS
 			//when miss, we assume this content will be return through PKT_NUM_ONCE packets
 			return latency;
 		}
+	}
+
+	public void report()
+	{
+		MyLog.jack("==============report============");
+		MyLog.jack("sent: ");
+		MyLog.jack("" + requested);
+		MyLog.jack("cache capacity(entry number): "
+				+ MyConf.BSL_SIZE / MyConf.FILE_SIZE);
+		if (requested != 0)
+			MyLog.jack("hited: " + hit_num + " ;hit ratio: ");
+		float ratio = (float) (hit_num * 1.0 / requested);
+		MyLog.jack("" + ratio);
+		MyLog.writeMyHit(ratio + "");
+		//		MyLog.writeByIndicator(ratio + "");
+		//		MyLog.jack("total latency: " + totalLatency + "ms");
+		//		MyLog.jack( "throughput: " + (count * MyConf.FILE_SIZE / 3600) + "KB/s");
+		MyLog.jack("==============report============");
+		requested = 0;
+		hit_num = 0;
+
+		//----LRU Report-----
+		agent.lruReport();
+
+		agent.VReport();
+	}
+
+	public void updateBSL_LRU_size()
+	{
+		agent.updateBSL_LRU_size();
 	}
 }

@@ -28,7 +28,7 @@ public class CandiLRU extends LinkedHashMap<Integer,CacheFile>
 		long old_time=file.getLastaccess();
 		file.setLastaccess(timestamp);
 		float old_pop=file.getPopularity();
-		float newPop=MyUtil.calPop(old_pop,old_time,timestamp);
+		float newPop=MyUtil.candiCalPop(old_pop,old_time,timestamp);
 		file.setPopularity(newPop);
 		return newPop;
 
