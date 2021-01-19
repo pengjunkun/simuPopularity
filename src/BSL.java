@@ -51,7 +51,7 @@ public class BSL
 		MyLog.jack("new M= " + M);
 		newPutNum = 0;
 
-//		memory.updateHeadM(M, timestamp);
+		memory.updateHeadM(M, timestamp);
 
 		//2~3. sort the first M nodes
 		memory.sortM_ByPop(M);

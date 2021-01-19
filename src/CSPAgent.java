@@ -114,27 +114,31 @@ public class CSPAgent
 					"request= " + requested + ",replaced=" + replaced + ", v= "
 							+ v);
 			//			if (slopeByFreq > MyConf.Vh)
-			if (v > MyConf.Vh||replaced<4)
+			if (replaced > 15)
 			{
-				//				float tempP = bsl.getMiddleThreshold();
-				//				if (Math.abs(tempP + 1) > 0.000001)
-				//					p = tempP;
+				//only replaced > 15
+				if (v > MyConf.Vh)
+				{
+					//				float tempP = bsl.getMiddleThreshold();
+					//				if (Math.abs(tempP + 1) > 0.000001)
+					//					p = tempP;
 
-				p *= MyConf.POP_DECREASE;
-				if (p < 1)
-					p = 1.0F;
-			}
-			//v is too low, which means the threshold is too low
-			//too aggressive
-			//			else if (slopeByFreq < -MyConf.Vl)
-			else if (v < -MyConf.Vl&&replaced>3)
-			{
-				p *= MyConf.POP_INCREASE;
-				//				float tempP = bsl.getMiddleThreshold();
-				//				if (Math.abs(tempP + 1) > 0.000001)
-				//					p = tempP;
-				//				if (p < 1)
-				//					p = 1.0F;
+					p *= MyConf.POP_DECREASE;
+					if (p < 1)
+						p = 1.0F;
+				}
+				//v is too low, which means the threshold is too low
+				//too aggressive
+				//			else if (slopeByFreq < -MyConf.Vl)
+				else if (v < -MyConf.Vl)
+				{
+					p *= MyConf.POP_INCREASE;
+					//				float tempP = bsl.getMiddleThreshold();
+					//				if (Math.abs(tempP + 1) > 0.000001)
+					//					p = tempP;
+					//				if (p < 1)
+					//					p = 1.0F;
+				}
 			}
 			MyLog.jack("set p= " + p);
 			//5.
