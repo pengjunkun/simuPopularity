@@ -78,7 +78,7 @@ public class Client
 		{
 			cds.report();
 
-			cds.updateBSL_LRU_size();
+//			cds.updateBSL_LRU_size();
 
 			lastReport = timestamp;
 		}
