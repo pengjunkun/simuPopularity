@@ -23,7 +23,7 @@ public class CDS
 	 * @param id
 	 * @return the latency of this request
 	 */
-	public float requestContent(int id, long timestamp)
+	public float requestContent(String id, long timestamp)
 	{
 		requested++;
 		int latency = 0;

@@ -20,7 +20,7 @@ public class Client
 		lastReport=0;
 	}
 
-	private void sendRequest(int id, long timestamp)
+	private void sendRequest(String id, long timestamp)
 	{
 		float res = cds.requestContent(id, timestamp);
 		//		if (timestamp % 21187 == 0)
@@ -43,9 +43,9 @@ public class Client
 			}
 			while (oneLine != null)
 			{
-				String id = oneLine.split(",")[4];
-				String timestamp = oneLine.split(",")[1];
-				sendRequest(Integer.parseInt(id), Long.parseLong(timestamp));
+				String id = oneLine.split(",")[1];
+				String timestamp = oneLine.split(",")[0];
+				sendRequest(id, Long.parseLong(timestamp));
 				oneLine = bufferedReader.readLine();
 			}
 

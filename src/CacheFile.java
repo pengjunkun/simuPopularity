@@ -3,13 +3,13 @@
  */
 public class CacheFile
 {
-	private int id;
+	private String id;
 
 	private long lastaccess;
 	private int size=0;
 	private float popularity=0;
 
-	public CacheFile(int id, int size,long lastaccess,float popularity )
+	public CacheFile(String id, int size,long lastaccess,float popularity )
 	{
 		this.id = id;
 		this.lastaccess = lastaccess;

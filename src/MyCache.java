@@ -11,13 +11,13 @@ class MyCache
 
 	class Node
 	{
-		int key;
+		String key;
 		CacheFile file;
 		Node before;
 		Node after;
 	}
 
-	private HashMap<Integer, Node> hashMap = new HashMap<Integer, Node>();
+	private HashMap<String, Node> hashMap = new HashMap<String, Node>();
 	private Node head, tail;
 
 	public MyCache(long capacity)
@@ -74,7 +74,7 @@ class MyCache
 		addToTail(node);
 	}
 
-	public CacheFile get(int key)
+	public CacheFile get(String key)
 	{
 		Node node = hashMap.get(key);
 		if (node == null)
@@ -109,7 +109,7 @@ class MyCache
 	 * @param popualrity
 	 * @return return the popularity of file that is replaced(0 for not occur replacement)
 	 */
-	public float put(int key, int size, long timestamp, float popualrity)
+	public float put(String key, int size, long timestamp, float popualrity)
 	{
 		//		if (usedSize==capacity)
 		//			MyLog.jack("full now");
@@ -249,26 +249,26 @@ class MyCache
 	public static void unitTest()
 	{
 		MyCache ln = new MyCache(21);
-		ln.put(20, 0, 1, 20);
-		ln.put(18, 0, 1, 18);
-		ln.put(19, 0, 1, 19);
-		ln.put(1, 0, 1, 1);
-		ln.put(2, 0, 1, 2);
-		ln.put(3, 0, 1, 3);
-		ln.put(4, 0, 1, 4);
-		ln.put(5, 0, 1, 5);
-		ln.put(6, 0, 1, 6);
-		ln.put(7, 0, 1, 7);
-		ln.put(8, 0, 1, 8);
-		ln.put(9, 0, 1, 9);
-		ln.put(10, 0, 1, 10);
-		ln.put(11, 0, 1, 11);
-		ln.put(12, 0, 1, 12);
-		ln.put(13, 0, 1, 13);
-		ln.put(14, 0, 1, 14);
-		ln.put(15, 0, 1, 15);
-		ln.put(16, 0, 1, 16);
-		ln.put(17, 0, 1, 17);
+//		ln.put(20, 0, 1, 20);
+//		ln.put(18, 0, 1, 18);
+//		ln.put(19, 0, 1, 19);
+//		ln.put(1, 0, 1, 1);
+//		ln.put(2, 0, 1, 2);
+//		ln.put(3, 0, 1, 3);
+//		ln.put(4, 0, 1, 4);
+//		ln.put(5, 0, 1, 5);
+//		ln.put(6, 0, 1, 6);
+//		ln.put(7, 0, 1, 7);
+//		ln.put(8, 0, 1, 8);
+//		ln.put(9, 0, 1, 9);
+//		ln.put(10, 0, 1, 10);
+//		ln.put(11, 0, 1, 11);
+//		ln.put(12, 0, 1, 12);
+//		ln.put(13, 0, 1, 13);
+//		ln.put(14, 0, 1, 14);
+//		ln.put(15, 0, 1, 15);
+//		ln.put(16, 0, 1, 16);
+//		ln.put(17, 0, 1, 17);
 
 		ln.printAll();
 		ln.sortM_ByPop(10);

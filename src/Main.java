@@ -12,8 +12,8 @@ public class Main
 	public static void main(String[] args)
 	{
 
-		Client client = new Client(
-				"/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
+		Client client = new Client("/Users/pengjunkun/Downloads/pythonProject/result.csv");
+//				"/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
 		client.run();
 
 		//		for (int i = 0; i < MyLog.lambdas.length; i++)

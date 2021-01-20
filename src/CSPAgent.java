@@ -31,7 +31,7 @@ public class CSPAgent
 		//		oldV = new LinkedList<>();
 	}
 
-	public boolean get(int id, long timestamp)
+	public boolean get(String id, long timestamp)
 	{
 		requested++;
 		boolean result = bsl.get(id, timestamp);

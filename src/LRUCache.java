@@ -9,7 +9,7 @@ import java.util.Set;
 public class LRUCache
 {
 	private long capacity;
-	private HashMap<Integer, Node> hashMap;
+	private HashMap<String, Node> hashMap;
 
 	private long usedSize = 0;
 
@@ -21,7 +21,7 @@ public class LRUCache
 
 	class Node
 	{
-		int key;
+		String key;
 		CacheFile file;
 		Node before;
 		Node after;
@@ -92,7 +92,7 @@ public class LRUCache
 		return removedNode;
 	}
 
-	public void put(Integer key, CacheFile value)
+	public void put(String key, CacheFile value)
 	{
 		Node node = hashMap.get(key);
 		if (node == null)
@@ -131,31 +131,31 @@ public class LRUCache
 	public static void unitTest()
 	{
 		LRUCache ln = new LRUCache(21);
-		ln.put(20, 0, 1, 20);
-		ln.put(18, 0, 1, 18);
-		ln.put(19, 0, 1, 19);
-		ln.put(1, 0, 1, 1);
-		ln.put(2, 0, 1, 2);
-		ln.put(3, 0, 1, 3);
-		ln.put(4, 0, 1, 4);
-		ln.put(5, 0, 1, 5);
-		ln.put(6, 0, 1, 6);
-		ln.put(7, 0, 1, 7);
-		ln.put(8, 0, 1, 8);
-		ln.put(9, 0, 1, 9);
-		ln.put(10, 0, 1, 10);
-		ln.put(11, 0, 1, 11);
-		ln.put(12, 0, 1, 12);
-		ln.put(13, 0, 1, 13);
-		ln.put(14, 0, 1, 14);
-		ln.put(15, 0, 1, 15);
-		ln.put(16, 0, 1, 16);
-		ln.put(17, 0, 1, 17);
+//		ln.put(20, 0, 1, 20);
+//		ln.put(18, 0, 1, 18);
+//		ln.put(19, 0, 1, 19);
+//		ln.put(1, 0, 1, 1);
+//		ln.put(2, 0, 1, 2);
+//		ln.put(3, 0, 1, 3);
+//		ln.put(4, 0, 1, 4);
+//		ln.put(5, 0, 1, 5);
+//		ln.put(6, 0, 1, 6);
+//		ln.put(7, 0, 1, 7);
+//		ln.put(8, 0, 1, 8);
+//		ln.put(9, 0, 1, 9);
+//		ln.put(10, 0, 1, 10);
+//		ln.put(11, 0, 1, 11);
+//		ln.put(12, 0, 1, 12);
+//		ln.put(13, 0, 1, 13);
+//		ln.put(14, 0, 1, 14);
+//		ln.put(15, 0, 1, 15);
+//		ln.put(16, 0, 1, 16);
+//		ln.put(17, 0, 1, 17);
 
 		ln.get(20);
 	}
 
-	private void put(int i, int i1, int i2, int i3)
+	private void put(String i, int i1, int i2, int i3)
 	{
 		usedSize += i1;
 		put(i, new CacheFile(i, i1, i2, i3));

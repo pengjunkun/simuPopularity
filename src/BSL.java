@@ -18,7 +18,7 @@ public class BSL
 		M = 100;
 	}
 
-	public boolean get(int id, long timestamp)
+	public boolean get(String id, long timestamp)
 	{
 		requestedNum++;
 		boolean result = false;
@@ -89,7 +89,7 @@ public class BSL
 	 * @param popularity
 	 * @return return the popularity of file that is replaced(0 for not occur replacement)
 	 */
-	public float put(int id, int size, long timestamp, float popularity)
+	public float put(String id, int size, long timestamp, float popularity)
 	{
 		newPutNum++;
 		return memory.put(id, size, timestamp, popularity);
