@@ -16,7 +16,6 @@ public class CSPAgent
 	private int replaced = 0;
 	private int hited = 0;
 	private int v = 0;
-	//	private LinkedList<Integer> oldV;
 
 	private LRUCache lruCache;
 
@@ -24,9 +23,7 @@ public class CSPAgent
 	{
 		bsl = new BSL(MyConf.BSL_SIZE);
 		candidates = new CandiLRU();
-		//		memory2 = new LRUCache(MyConf.BSL_SIZE);
-		lruCache = new LRUCache(33790);
-		//		oldV = new LinkedList<>();
+		lruCache = new LRUCache(MyConf.BSL_SIZE);
 	}
 
 	public boolean get(String id, long timestamp)
@@ -40,13 +37,12 @@ public class CSPAgent
 			lruCache.put(id, new CacheFile(id, MyConf.FILE_SIZE, timestamp, 0));
 		} else
 		{
-			hited++;
+			//			hited++;
 		}
 
-		//if not in BSL
 		boolean result = bsl.get(id, timestamp);
-		//		if (result)
-		//			hited++;
+		if (result)
+			hited++;
 		if (!result)
 		{
 			float candidate_pop = candidates.getPopulairty(id, timestamp);
@@ -149,12 +145,12 @@ public class CSPAgent
 
 			float normalBandwidth = (requested * MyConf.TRANS_ONE_FILE_NORM)
 					/ MyConf.UPDATE_PERIOD;
-			float lruBandwidth = (hited * MyConf.TRANS_ONE_FILE_OUR
+			float ourBandwidth = (hited * MyConf.TRANS_ONE_FILE_OUR
 					+ (requested - hited) * MyConf.TRANS_ONE_FILE_NORM)
 					/ MyConf.UPDATE_PERIOD;
 			MyLog.jack("norm:" + normalBandwidth);
-			MyLog.jack("our :" + lruBandwidth);
-			MyLog.tagWriter(normalBandwidth + " " + lruBandwidth);
+			MyLog.jack("our :" + ourBandwidth);
+			MyLog.tagWriter(normalBandwidth + " " + ourBandwidth);
 
 			//5.
 			lastUpdate = timestamp;
@@ -169,10 +165,11 @@ public class CSPAgent
 	{
 		long newBslSize = bsl.updateSize();
 		MyConf.BSL_SIZE = newBslSize;
-		//		memory2.updateSize(newBslSize);
+		lruCache.updateSize(newBslSize);
 		MyLog.jack(
 				"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~new BSL size: ");
 		MyLog.jack("" + newBslSize);
+//		System.out.println("new size: "+newBslSize);
 		MyLog.writeSize("" + newBslSize);
 	}
 
@@ -184,9 +181,5 @@ public class CSPAgent
 	public void fianlLruReport()
 	{
 		lruCache.finalReport();
-	}
-
-	public void VReport()
-	{
 	}
 }

@@ -77,8 +77,6 @@ public class CDS
 
 		//----LRU Report-----
 		agent.lruReport();
-
-		agent.VReport();
 	}
 
 	public void fianlLruReport()

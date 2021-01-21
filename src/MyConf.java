@@ -17,15 +17,17 @@ public class MyConf
 	public static float BSL_EXPON_LAMBDA = .01F;
 	public static int LAMBDAINDICATOR = 0;
 	//temp work: the BSL size, unit:KB
-	//the range of content from [0,99999]
-	//so, below 4 stands for 4% of whole files
 	public static long BSL_SIZE = 1 * 100 * 1024;
-	//todo: random of filesize
-	//may replace several cached files
-	//test several times to show
-	public static final int FILE_SIZE = 1 * 1024;
-	public static final int TRANS_ONE_FILE_NORM = 128 + FILE_SIZE;
-	public static final int TRANS_ONE_FILE_OUR = 128;
+//	public static long BSL_SIZE = 33790;
+	//unit:KiB
+	public static final int FILE_SIZE = 10 * 1024;
+	public static int TRANS_ONE_FILE_NORM = 0;
+	public static int TRANS_ONE_FILE_OUR = 0;
+	static {
+		TRANS_ONE_FILE_NORM = (int) ((6+2*FILE_SIZE)*1.0/16 + FILE_SIZE);
+		TRANS_ONE_FILE_OUR = (int) ((6+Math.log(FILE_SIZE)/Math.log(2)+FILE_SIZE)/16);
+
+	}
 	public static final int CANDIDATES_NUM = 1000000;
 	public static final float MISS_INCREASE = 0.005F;
 

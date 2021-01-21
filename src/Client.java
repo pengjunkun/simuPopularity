@@ -64,7 +64,7 @@ public class Client
 		{
 			e.printStackTrace();
 		}
-//		finalReport();
+		//		finalReport();
 
 	}
 
@@ -75,7 +75,8 @@ public class Client
 		{
 			MyLog.logger.info(MyConf.TAG + " our " + (1.0F * totalHit
 					/ totalRequest));
-			MyLog.writeResult( MyConf.TAG + " our " + (1.0F * totalHit / totalRequest));
+			MyLog.writeResult(
+					MyConf.TAG + " our " + (1.0F * totalHit / totalRequest));
 		}
 		MyLog.logger.info("==========final report========");
 		cds.fianlLruReport();
@@ -93,7 +94,7 @@ public class Client
 		{
 			cds.report();
 
-						cds.updateBSL_LRU_size();
+			cds.updateBSL_LRU_size();
 
 			lastReport = timestamp;
 		}
