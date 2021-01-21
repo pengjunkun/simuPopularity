@@ -18,6 +18,7 @@ public class CSPAgent
 	private float p = 0.99F;
 	private int requested = 0;
 	private int replaced = 0;
+	private int hited = 0;
 	private int v = 0;
 	//	private LinkedList<Integer> oldV;
 
@@ -35,6 +36,8 @@ public class CSPAgent
 	{
 		requested++;
 		boolean result = bsl.get(id, timestamp);
+		if (result)
+			hited++;
 
 		CacheFile tmp2 = memory2.get(id);
 		if (tmp2 == null)
@@ -51,6 +54,7 @@ public class CSPAgent
 				//remove candidate from candidates, because it has became a formal cache -_-
 				float oldPop = bsl
 						.put(id, MyConf.FILE_SIZE, timestamp, candidate_pop);
+				MyLog.jack("oldpop: " + oldPop);
 				candidates.remove(id);
 
 				//				MyLog.jack("current p,candidate pop, replaced file pop: " + p + ", " + candidate_pop + ", " + oldPop);
@@ -141,10 +145,21 @@ public class CSPAgent
 				}
 			}
 			MyLog.jack("set p= " + p);
+
+			float normalBandwidth = (requested * MyConf.TRANS_ONE_FILE_NORM)
+					/ MyConf.UPDATE_PERIOD;
+			float ourBandwidth = (hited * MyConf.TRANS_ONE_FILE_OUR
+					+ (requested - hited) * MyConf.TRANS_ONE_FILE_NORM)
+					/ MyConf.UPDATE_PERIOD;
+			MyLog.jack("norm:" + normalBandwidth);
+			MyLog.jack("our :" + ourBandwidth);
+			MyLog.writeByDefaultWriter(normalBandwidth + " " + ourBandwidth);
+
 			//5.
 			lastUpdate = timestamp;
 			requested = 0;
 			replaced = 0;
+			hited = 0;
 			v = 0;
 		}
 	}
@@ -157,12 +172,17 @@ public class CSPAgent
 		MyLog.jack(
 				"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~new BSL size: ");
 		MyLog.jack("" + newBslSize);
-		MyLog.writeSize("" + newBslSize);
+//		MyLog.writeSize("" + newBslSize);
 	}
 
 	public void lruReport()
 	{
 		memory2.report();
+	}
+
+	public void fianlLruReport()
+	{
+		memory2.finalReport();
 	}
 
 	public void VReport()

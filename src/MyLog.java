@@ -10,23 +10,24 @@ import java.util.logging.*;
 public class MyLog
 {
 	public static Logger logger;
+	public static BufferedWriter tagWriter;
 
 	private static BufferedWriter writerSize;
-	private static BufferedWriter writerV;
+	private static BufferedWriter writerResult;
 	private static BufferedWriter writerMyHit;
 	private static BufferedWriter writerLRUHit;
 
 	public static ArrayList<BufferedWriter> writers = new ArrayList<>();
 
-	public static String[] lambdas = { "0", "5", "10", "15", "20", "25", "30",
-			"35", "40", "45" };
+	public static String[] lambdas = { "1.01", "1.03", "1.07", "1.15", "1.3" };
+	public static Float[] testSizes = { 0.25F, 0.5F, 1F, 2F, 4F, };
 
 	static
 	{
 		try
 		{
 			writerSize = new BufferedWriter(new FileWriter("./size.csv"));
-			writerV = new BufferedWriter(new FileWriter("./v.csv"));
+			writerResult = new BufferedWriter(new FileWriter("./result.csv"));
 			writerMyHit = new BufferedWriter(new FileWriter("./myHit.csv"));
 			writerLRUHit = new BufferedWriter(new FileWriter("./LRUHit.csv"));
 
@@ -58,9 +59,44 @@ public class MyLog
 		logger.addHandler(ch);
 	}
 
+	public static void initTagWriter()
+	{
+		try
+		{
+			tagWriter = new BufferedWriter(new FileWriter(MyConf.TAG + ".csv"));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void writeByDefaultWriter(String cont)
+	{
+		try
+		{
+			tagWriter.write(cont);
+			tagWriter.newLine();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static void closeTagWriter()
+	{
+		try
+		{
+			tagWriter.close();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	public static void jack(String s)
 	{
-				System.out.println(s);
+		//		System.out.println(s);
 	}
 
 	public static void jackJoint(String s)
@@ -72,8 +108,8 @@ public class MyLog
 	{
 		try
 		{
-			writers.get(MyConf.LAMBDAINDICATOR).write(cont+" ");
-//			writers.get(MyConf.LAMBDAINDICATOR).newLine();
+			writers.get(MyConf.LAMBDAINDICATOR).write(cont + " ");
+			//			writers.get(MyConf.LAMBDAINDICATOR).newLine();
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -116,17 +152,18 @@ public class MyLog
 		}
 	}
 
-	public static void writeV(String cont)
+	public static void writeResult(String cont)
 	{
 		try
 		{
-			writerV.write(cont);
-			writerV.newLine();
+			writerResult.write(cont);
+			writerResult.newLine();
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
+
 	public static void closeWrite()
 	{
 		try
@@ -134,7 +171,7 @@ public class MyLog
 			writerSize.close();
 			writerMyHit.close();
 			writerLRUHit.close();
-			writerV.close();
+			writerResult.close();
 
 		} catch (IOException e)
 		{

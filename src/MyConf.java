@@ -3,6 +3,7 @@
  */
 public class MyConf
 {
+	public static String TAG = "";
 	public static final long UPDATE_PERIOD = 120;
 	public static final long REPORT_PERIOD = 20 * 60;
 	//	p*=MyConf.POP_DECREASE;
@@ -23,6 +24,8 @@ public class MyConf
 	//may replace several cached files
 	//test several times to show
 	public static final int FILE_SIZE = 1 * 1024;
+	public static final int TRANS_ONE_FILE_NORM = 128 + FILE_SIZE;
+	public static final int TRANS_ONE_FILE_OUR = 128;
 	public static final int CANDIDATES_NUM = 1000000;
 	public static final float MISS_INCREASE = 0.005F;
 
@@ -45,11 +48,4 @@ public class MyConf
 	public static final int PACKET_ID_SIZE = 40;
 	public static final int PACKET_FULL_SIZE = 1400;
 
-	//todo list
-	/*
-	1.baseline scenario(LRU)
-	2.限制带宽功能
-	3.按需调整存储大r
-	4.命中率(size)
-	 */
 }

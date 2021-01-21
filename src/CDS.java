@@ -23,12 +23,14 @@ public class CDS
 	 * @param id
 	 * @return the latency of this request
 	 */
-	public float requestContent(String id, long timestamp)
+	public boolean requestContent(String id, long timestamp)
 	{
 		requested++;
 		int latency = 0;
+		boolean res = false;
+		res = agent.get(id, timestamp);
 		//hit
-		if (agent.get(id, timestamp))
+		if (res)
 		{
 			hit_num++;
 			//fixed TCP connection:
@@ -36,7 +38,7 @@ public class CDS
 			latency += (2 * MyConf.CLIENT2CDS + 2 * MyConf.SEND64) * 10;
 			latency += (MyConf.SEND1024 + MyConf.RESTORE_LATENCY) * 1024;
 			//when hits, we assume this content will be return through PKT_NUM_ONCE packets
-			return latency;
+//			return latency;
 		}
 		//miss
 		else
@@ -49,8 +51,9 @@ public class CDS
 					MyConf.SEND1024 * 1024 * (1 + MyConf.MISS_INCREASE * random
 							.nextFloat());
 			//when miss, we assume this content will be return through PKT_NUM_ONCE packets
-			return latency;
+//			return latency;
 		}
+		return res;
 	}
 
 	public void report()
@@ -64,7 +67,7 @@ public class CDS
 			MyLog.jack("hited: " + hit_num + " ;hit ratio: ");
 		float ratio = (float) (hit_num * 1.0 / requested);
 		MyLog.jack("" + ratio);
-		MyLog.writeMyHit(ratio + "");
+//		MyLog.writeMyHit(ratio + "");
 		//		MyLog.writeByIndicator(ratio + "");
 		//		MyLog.jack("total latency: " + totalLatency + "ms");
 		//		MyLog.jack( "throughput: " + (count * MyConf.FILE_SIZE / 3600) + "KB/s");
@@ -76,6 +79,11 @@ public class CDS
 		agent.lruReport();
 
 		agent.VReport();
+	}
+
+	public void fianlLruReport()
+	{
+		agent.fianlLruReport();
 	}
 
 	public void updateBSL_LRU_size()

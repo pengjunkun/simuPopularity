@@ -15,6 +15,8 @@ public class LRUCache
 
 	private int requested;
 	private int hited;
+	private int totalRequested;
+	private int totalHited;
 
 	private Node head;
 	private Node tail;
@@ -31,6 +33,8 @@ public class LRUCache
 	{
 		capacity = initialCapacity;
 		hashMap = new HashMap<>();
+		totalRequested = 0;
+		totalHited = 0;
 
 		head = new Node();
 		head.before = null;
@@ -75,10 +79,12 @@ public class LRUCache
 	{
 		Node node = hashMap.get(key);
 		requested += 1;
+		totalRequested += 1;
 		if (node != null)
 		{
 			moveToTail(node);
 			hited += 1;
+			totalHited += 1;
 		}
 
 		return null;
@@ -121,36 +127,50 @@ public class LRUCache
 				MyLog.jack("hited: " + hited + " ;hit ratio: ");
 			float ratio = (float) (hited * 1.0 / requested);
 			MyLog.jack("" + ratio);
-			MyLog.writeLRUHit("" + ratio);
+//			MyLog.writeLRUHit("" + ratio);
 			MyLog.jack("-------------LRU report-------------");
 			requested = 0;
 			hited = 0;
 		}
 	}
 
+	public void finalReport()
+	{
+		if (totalRequested != 0)
+		{
+			MyLog.jack("--------final LRU----");
+			MyLog.jack("total sent:" + totalRequested);
+			MyLog.jack("total hited:" + totalHited);
+			MyLog.jack("ratio: " + 1.0F * totalHited / totalRequested);
+			MyLog.writeResult(
+					MyConf.TAG + " LRU " + 1.0F * totalHited / totalRequested);
+			MyLog.jack("--------final LRU----");
+		}
+	}
+
 	public static void unitTest()
 	{
 		LRUCache ln = new LRUCache(21);
-//		ln.put(20, 0, 1, 20);
-//		ln.put(18, 0, 1, 18);
-//		ln.put(19, 0, 1, 19);
-//		ln.put(1, 0, 1, 1);
-//		ln.put(2, 0, 1, 2);
-//		ln.put(3, 0, 1, 3);
-//		ln.put(4, 0, 1, 4);
-//		ln.put(5, 0, 1, 5);
-//		ln.put(6, 0, 1, 6);
-//		ln.put(7, 0, 1, 7);
-//		ln.put(8, 0, 1, 8);
-//		ln.put(9, 0, 1, 9);
-//		ln.put(10, 0, 1, 10);
-//		ln.put(11, 0, 1, 11);
-//		ln.put(12, 0, 1, 12);
-//		ln.put(13, 0, 1, 13);
-//		ln.put(14, 0, 1, 14);
-//		ln.put(15, 0, 1, 15);
-//		ln.put(16, 0, 1, 16);
-//		ln.put(17, 0, 1, 17);
+		//		ln.put(20, 0, 1, 20);
+		//		ln.put(18, 0, 1, 18);
+		//		ln.put(19, 0, 1, 19);
+		//		ln.put(1, 0, 1, 1);
+		//		ln.put(2, 0, 1, 2);
+		//		ln.put(3, 0, 1, 3);
+		//		ln.put(4, 0, 1, 4);
+		//		ln.put(5, 0, 1, 5);
+		//		ln.put(6, 0, 1, 6);
+		//		ln.put(7, 0, 1, 7);
+		//		ln.put(8, 0, 1, 8);
+		//		ln.put(9, 0, 1, 9);
+		//		ln.put(10, 0, 1, 10);
+		//		ln.put(11, 0, 1, 11);
+		//		ln.put(12, 0, 1, 12);
+		//		ln.put(13, 0, 1, 13);
+		//		ln.put(14, 0, 1, 14);
+		//		ln.put(15, 0, 1, 15);
+		//		ln.put(16, 0, 1, 16);
+		//		ln.put(17, 0, 1, 17);
 
 		ln.get(20);
 	}

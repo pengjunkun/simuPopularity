@@ -9,23 +9,30 @@ public class Client
 {
 	private CDS cds;
 	private String filePath;
-	private double totalLatency;
+	//	private double totalLatency;
 	private long lastReport;
+	private int totalRequest;
+	private int totalHit;
 
 	public Client(String filePath)
 	{
 		this.filePath = filePath;
-		totalLatency = 0;
+		//		totalLatency = 0;
 		cds = new CDS();
-		lastReport=0;
+		lastReport = 0;
+		totalHit = 0;
+		totalRequest = 0;
 	}
 
 	private void sendRequest(String id, long timestamp)
 	{
-		float res = cds.requestContent(id, timestamp);
+		totalRequest += 1;
+		boolean res = cds.requestContent(id, timestamp);
+		if (res)
+			totalHit += 1;
 		//		if (timestamp % 21187 == 0)
 		//			MyLog.jack("latency: " + res);
-		totalLatency += res;
+		//		totalLatency += res;
 		actionPeriod(timestamp);
 	}
 
@@ -48,6 +55,7 @@ public class Client
 				sendRequest(id, Long.parseLong(timestamp));
 				oneLine = bufferedReader.readLine();
 			}
+			bufferedReader.close();
 
 		} catch (FileNotFoundException e)
 		{
@@ -56,14 +64,22 @@ public class Client
 		{
 			e.printStackTrace();
 		}
+		finalReport();
 
 	}
 
 	private void finalReport()
 	{
 		MyLog.logger.info("==========final report========");
-		MyLog.logger.info("total time: " + totalLatency);
+		if (totalRequest != 0)
+		{
+			MyLog.logger.info(MyConf.TAG + " our " + (1.0F * totalHit
+					/ totalRequest));
+			MyLog.writeResult(
+					MyConf.TAG + " our " + (1.0F * totalHit / totalRequest));
+		}
 		MyLog.logger.info("==========final report========");
+		cds.fianlLruReport();
 	}
 
 	public void run()
@@ -78,7 +94,7 @@ public class Client
 		{
 			cds.report();
 
-//			cds.updateBSL_LRU_size();
+			//			cds.updateBSL_LRU_size();
 
 			lastReport = timestamp;
 		}

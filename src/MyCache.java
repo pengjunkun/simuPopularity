@@ -134,8 +134,6 @@ class MyCache
 			addToTail(newNode);
 			usedSize += size;
 		}
-		if (timestamp == 1430673641)
-			MyLog.jack("" + timestamp);
 		return result;
 	}
 

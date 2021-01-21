@@ -12,25 +12,31 @@ public class Main
 	public static void main(String[] args)
 	{
 
-		Client client = new Client("/Users/pengjunkun/Downloads/pythonProject/result.csv");
-//				"/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
-		client.run();
+		//for now, each generated file has about 1520000 different content in 3560000 requests
+		//		Client client = new Client( "/Users/pengjunkun/Downloads/pythonProject/result.csv");
+		//				"/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
+		//		client.run();
 
-		//		for (int i = 0; i < MyLog.lambdas.length; i++)
-		//		{
-		//			MyConf.EXPON_LAMBDA = Float.parseFloat(MyLog.lambdas[i]);
-		//			MyConf.LAMBDAINDICATOR = i;
-		//			Client client = new Client( "/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
-		//			client.run();
-		//			try
-		//			{
-		//				MyLog.writers.get(i).close();
-		//			} catch (IOException e)
-		//			{
-		//				e.printStackTrace();
-		//			}
-		//		}
-		//
+		for (int s = 0; s < MyLog.testSizes.length; s++)
+		{
+			Float sizeP = MyLog.testSizes[s];
+			System.out.println("fixe size: " + sizeP);
+
+			MyConf.BSL_SIZE = (long) (sizeP * 100 * MyConf.FILE_SIZE);
+			for (int l = 0; l < MyLog.lambdas.length; l++)
+			{
+				String ll = MyLog.lambdas[l];
+				MyConf.TAG = sizeP + "-" + ll;
+				MyLog.initTagWriter();
+				System.out.println("fixe lambda: " + ll);
+				Client client = new Client(
+						"/Users/pengjunkun/Downloads/pythonProject/" + ll
+								+ ".csv");
+				client.run();
+				MyLog.closeTagWriter();
+			}
+
+		}
 		MyLog.closeWrite();
 	}
 }
