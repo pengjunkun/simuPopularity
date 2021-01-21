@@ -67,7 +67,7 @@ public class CDS
 			MyLog.jack("hited: " + hit_num + " ;hit ratio: ");
 		float ratio = (float) (hit_num * 1.0 / requested);
 		MyLog.jack("" + ratio);
-//		MyLog.writeMyHit(ratio + "");
+		MyLog.writeMyHit(ratio + "");
 		//		MyLog.writeByIndicator(ratio + "");
 		//		MyLog.jack("total latency: " + totalLatency + "ms");
 		//		MyLog.jack( "throughput: " + (count * MyConf.FILE_SIZE / 3600) + "KB/s");

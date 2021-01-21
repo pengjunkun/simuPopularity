@@ -50,8 +50,8 @@ public class Client
 			}
 			while (oneLine != null)
 			{
-				String id = oneLine.split(",")[1];
-				String timestamp = oneLine.split(",")[0];
+				String id = oneLine.split(",")[4];
+				String timestamp = oneLine.split(",")[1];
 				sendRequest(id, Long.parseLong(timestamp));
 				oneLine = bufferedReader.readLine();
 			}
@@ -64,7 +64,7 @@ public class Client
 		{
 			e.printStackTrace();
 		}
-		finalReport();
+//		finalReport();
 
 	}
 
@@ -75,8 +75,7 @@ public class Client
 		{
 			MyLog.logger.info(MyConf.TAG + " our " + (1.0F * totalHit
 					/ totalRequest));
-			MyLog.writeResult(
-					MyConf.TAG + " our " + (1.0F * totalHit / totalRequest));
+			MyLog.writeResult( MyConf.TAG + " our " + (1.0F * totalHit / totalRequest));
 		}
 		MyLog.logger.info("==========final report========");
 		cds.fianlLruReport();
@@ -94,7 +93,7 @@ public class Client
 		{
 			cds.report();
 
-			//			cds.updateBSL_LRU_size();
+						cds.updateBSL_LRU_size();
 
 			lastReport = timestamp;
 		}

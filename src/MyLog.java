@@ -19,8 +19,10 @@ public class MyLog
 
 	public static ArrayList<BufferedWriter> writers = new ArrayList<>();
 
-	public static String[] lambdas = { "1.01", "1.03", "1.07", "1.15", "1.3" };
-	public static Float[] testSizes = { 0.25F, 0.5F, 1F, 2F, 4F, };
+	//	public static String[] lambdas = { "1.01", "1.03", "1.07", "1.15", "1.31" };
+	public static String[] lambdas = { "1.15" };
+	//	public static Float[] testSizes = { 0.25F, 0.5F, 1F, 2F, 4F, };
+	public static Float[] testSizes = { 0.25F };
 
 	static
 	{
@@ -71,7 +73,7 @@ public class MyLog
 
 	}
 
-	public static void writeByDefaultWriter(String cont)
+	public static void tagWriter(String cont)
 	{
 		try
 		{

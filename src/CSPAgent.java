@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-
 /**
  * Created by JackPeng(pengjunkun@gmail.com) on 2021/1/13.
  */
@@ -22,30 +18,35 @@ public class CSPAgent
 	private int v = 0;
 	//	private LinkedList<Integer> oldV;
 
-	private LRUCache memory2;
+	private LRUCache lruCache;
 
 	public CSPAgent()
 	{
 		bsl = new BSL(MyConf.BSL_SIZE);
 		candidates = new CandiLRU();
-		memory2 = new LRUCache(MyConf.BSL_SIZE);
+		//		memory2 = new LRUCache(MyConf.BSL_SIZE);
+		lruCache = new LRUCache(33790);
 		//		oldV = new LinkedList<>();
 	}
 
 	public boolean get(String id, long timestamp)
 	{
 		requested++;
-		boolean result = bsl.get(id, timestamp);
-		if (result)
-			hited++;
 
-		CacheFile tmp2 = memory2.get(id);
+		//for lru, if not hit, this id will be saved in
+		CacheFile tmp2 = lruCache.get(id);
 		if (tmp2 == null)
 		{
-			memory2.put(id, new CacheFile(id, MyConf.FILE_SIZE, timestamp, 0));
+			lruCache.put(id, new CacheFile(id, MyConf.FILE_SIZE, timestamp, 0));
+		} else
+		{
+			hited++;
 		}
 
 		//if not in BSL
+		boolean result = bsl.get(id, timestamp);
+		//		if (result)
+		//			hited++;
 		if (!result)
 		{
 			float candidate_pop = candidates.getPopulairty(id, timestamp);
@@ -148,12 +149,12 @@ public class CSPAgent
 
 			float normalBandwidth = (requested * MyConf.TRANS_ONE_FILE_NORM)
 					/ MyConf.UPDATE_PERIOD;
-			float ourBandwidth = (hited * MyConf.TRANS_ONE_FILE_OUR
+			float lruBandwidth = (hited * MyConf.TRANS_ONE_FILE_OUR
 					+ (requested - hited) * MyConf.TRANS_ONE_FILE_NORM)
 					/ MyConf.UPDATE_PERIOD;
 			MyLog.jack("norm:" + normalBandwidth);
-			MyLog.jack("our :" + ourBandwidth);
-			MyLog.writeByDefaultWriter(normalBandwidth + " " + ourBandwidth);
+			MyLog.jack("our :" + lruBandwidth);
+			MyLog.tagWriter(normalBandwidth + " " + lruBandwidth);
 
 			//5.
 			lastUpdate = timestamp;
@@ -168,21 +169,21 @@ public class CSPAgent
 	{
 		long newBslSize = bsl.updateSize();
 		MyConf.BSL_SIZE = newBslSize;
-		memory2.updateSize(newBslSize);
+		//		memory2.updateSize(newBslSize);
 		MyLog.jack(
 				"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~new BSL size: ");
 		MyLog.jack("" + newBslSize);
-//		MyLog.writeSize("" + newBslSize);
+		MyLog.writeSize("" + newBslSize);
 	}
 
 	public void lruReport()
 	{
-		memory2.report();
+		lruCache.report();
 	}
 
 	public void fianlLruReport()
 	{
-		memory2.finalReport();
+		lruCache.finalReport();
 	}
 
 	public void VReport()

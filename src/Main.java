@@ -13,30 +13,33 @@ public class Main
 	{
 
 		//for now, each generated file has about 1520000 different content in 3560000 requests
-		//		Client client = new Client( "/Users/pengjunkun/Downloads/pythonProject/result.csv");
-		//				"/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
-		//		client.run();
+		MyConf.TAG = "traceBandwidth";
+		MyLog.initTagWriter();
+		Client client = new Client(
+				"/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
+		client.run();
+		MyLog.closeTagWriter();
 
-		for (int s = 0; s < MyLog.testSizes.length; s++)
-		{
-			Float sizeP = MyLog.testSizes[s];
-			System.out.println("fixe size: " + sizeP);
-
-			MyConf.BSL_SIZE = (long) (sizeP * 100 * MyConf.FILE_SIZE);
-			for (int l = 0; l < MyLog.lambdas.length; l++)
-			{
-				String ll = MyLog.lambdas[l];
-				MyConf.TAG = sizeP + "-" + ll;
-				MyLog.initTagWriter();
-				System.out.println("fixe lambda: " + ll);
-				Client client = new Client(
-						"/Users/pengjunkun/Downloads/pythonProject/" + ll
-								+ ".csv");
-				client.run();
-				MyLog.closeTagWriter();
-			}
-
-		}
+		//		for (int s = 0; s < MyLog.testSizes.length; s++)
+		//		{
+		//			Float sizeP = MyLog.testSizes[s];
+		//			System.out.println("fixe size: " + sizeP);
+		//
+		//			MyConf.BSL_SIZE = (long) (sizeP * 100 * MyConf.FILE_SIZE);
+		//			for (int l = 0; l < MyLog.lambdas.length; l++)
+		//			{
+		//				String ll = MyLog.lambdas[l];
+		//				MyConf.TAG = sizeP + "-" + ll;
+		//				MyLog.initTagWriter();
+		//				System.out.println("fixe lambda: " + ll);
+		//				Client client = new Client(
+		//						"/Users/pengjunkun/Downloads/pythonProject/" + ll
+		//								+ ".csv");
+		//				client.run();
+		//				MyLog.closeTagWriter();
+		//			}
+		//
+		//		}
 		MyLog.closeWrite();
 	}
 }

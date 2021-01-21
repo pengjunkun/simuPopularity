@@ -85,6 +85,7 @@ public class LRUCache
 			moveToTail(node);
 			hited += 1;
 			totalHited += 1;
+			return node.file;
 		}
 
 		return null;
@@ -127,7 +128,7 @@ public class LRUCache
 				MyLog.jack("hited: " + hited + " ;hit ratio: ");
 			float ratio = (float) (hited * 1.0 / requested);
 			MyLog.jack("" + ratio);
-//			MyLog.writeLRUHit("" + ratio);
+			MyLog.writeLRUHit("" + ratio);
 			MyLog.jack("-------------LRU report-------------");
 			requested = 0;
 			hited = 0;
