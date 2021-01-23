@@ -64,12 +64,18 @@ public class BSL
 
 	}
 
-	public long updateSize()
+	public long plink_pop_updateSize()
 	{
+		//the first update is for 1st request, so return the initial size
 		if (lastRequestedNum == 0)
 		{
 			lastRequestedNum = requestedNum;
 			return memory.getCapacity();
+		}
+		//the second update, actually has only one requests record
+		else if (lastRequestedNum == 1)
+		{
+			lastRequestedNum = requestedNum;
 		}
 		long newBslSize = MyUtil.calBslSize(lastRequestedNum, requestedNum);
 		lastRequestedNum = requestedNum;

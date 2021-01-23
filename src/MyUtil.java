@@ -31,7 +31,7 @@ public class MyUtil
 	{
 		int nextRequests = Rt1 + (Rt1 - Rt0) / 2;
 		float entryCapacity = (float) (nextRequests / MyConf.REPORT_PERIOD);
-		entryCapacity = (float) ((float) 3.0F * Math.pow(entryCapacity, 0.65));
+		entryCapacity = (float) ((float)  Math.pow(entryCapacity, 1.25));
 		return (long) (entryCapacity * MyConf.FILE_SIZE);
 	}
 }

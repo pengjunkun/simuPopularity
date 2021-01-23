@@ -170,8 +170,10 @@ public class CSPAgent
 
 	public void updateBSL_LRU_size()
 	{
-		long newBslSize = bsl.updateSize();
+		//ask plink-pop to update size, and get the new size
+		long newBslSize = bsl.plink_pop_updateSize();
 		MyConf.BSL_SIZE = newBslSize;
+		//ask lru to update with the size
 		lruCache.updateSize(newBslSize);
 		MyLog.jack(
 				"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~new BSL size: ");
