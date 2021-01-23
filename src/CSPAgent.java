@@ -24,8 +24,8 @@ public class CSPAgent
 	{
 		bsl = new BSL(MyConf.BSL_SIZE);
 		candidates = new CandiLRU();
-		//		lruCache = new LRUCache(MyConf.BSL_SIZE);
-		lruCache = new LRUCache(1 * 200 * 1024);
+		lruCache = new LRUCache(MyConf.BSL_SIZE);
+		//		lruCache = new LRUCache(1 * 200 * 1024);
 	}
 
 	public boolean get(String id, long timestamp)
@@ -172,12 +172,12 @@ public class CSPAgent
 	{
 		long newBslSize = bsl.updateSize();
 		MyConf.BSL_SIZE = newBslSize;
-		//		lruCache.updateSize(newBslSize);
+		lruCache.updateSize(newBslSize);
 		MyLog.jack(
 				"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~new BSL size: ");
 		MyLog.jack("" + newBslSize);
 		//		System.out.println("new size: "+newBslSize);
-		MyLog.writeSize("" + newBslSize);
+		MyLog.writeSize("" + newBslSize / MyConf.FILE_SIZE);
 	}
 
 	public void lruReport()
