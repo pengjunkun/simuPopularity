@@ -79,13 +79,13 @@ class MyCache
 
 	public CacheFile get(String key)
 	{
-//		MyLog.writeMyHit("request: " + key);
-//		MyLog.writeMyHit("for now, cached:" + printAll(key));
+		//		MyLog.writeMyHit("request: " + key);
+		//		MyLog.writeMyHit("for now, cached:" + printAll(key));
 		Node node = hashMap.get(key);
 		if (node == null)
 		{
 			missed++;
-//			MyLog.writeMyHit("miss: " + missed);
+			//			MyLog.writeMyHit("miss: " + missed);
 			return null;
 		}
 		//		printAll();
@@ -93,7 +93,8 @@ class MyCache
 		//		printAll();
 		moveToTail(node);
 		hited++;
-//		MyLog.writeMyHit("hit: " + hited);
+		printAll(key);
+		//		MyLog.writeMyHit("hit: " + hited);
 		return node.file;
 	}
 
@@ -246,16 +247,24 @@ class MyCache
 		StringBuffer bf = new StringBuffer();
 		bf.append("[");
 		Node node = head.after;
+		boolean hasError = true;
 		while (node != tail)
 		{
 			//			MyLog.jack( "id=" + node.key + ";pop=" + node.file.getPopularity());
 			//			MyLog.jackJoint(node.key + ",");
 			if (key.equals(node.key))
+			{
+				hasError = false;
 				bf.append("---" + node.key + "---,");
-			else
+			} else
 				bf.append(node.key + ",");
 			node = node.after;
 		}
+		if (hasError){
+			MyLog.logger.severe("error");
+			System.exit(1);
+		}
+
 		//		MyLog.jack("------------");
 		bf.append("]");
 		return bf.toString();

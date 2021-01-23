@@ -15,6 +15,7 @@ public class CSPAgent
 	private int requested = 0;
 	private int replaced = 0;
 	private int hited = 0;
+	private int lruHited = 0;
 	private int v = 0;
 
 	private LRUCache lruCache;
@@ -23,7 +24,8 @@ public class CSPAgent
 	{
 		bsl = new BSL(MyConf.BSL_SIZE);
 		candidates = new CandiLRU();
-		lruCache = new LRUCache(MyConf.BSL_SIZE);
+		//		lruCache = new LRUCache(MyConf.BSL_SIZE);
+		lruCache = new LRUCache(1 * 200 * 1024);
 	}
 
 	public boolean get(String id, long timestamp)
@@ -37,7 +39,7 @@ public class CSPAgent
 			lruCache.put(id, new CacheFile(id, MyConf.FILE_SIZE, timestamp, 0));
 		} else
 		{
-			//			hited++;
+			lruHited++;
 		}
 
 		boolean result = bsl.get(id, timestamp);
@@ -148,15 +150,20 @@ public class CSPAgent
 			float ourBandwidth = (hited * MyConf.TRANS_ONE_FILE_OUR
 					+ (requested - hited) * MyConf.TRANS_ONE_FILE_NORM)
 					/ MyConf.UPDATE_PERIOD;
+			float lruBandwidth = (lruHited * MyConf.TRANS_ONE_FILE_OUR
+					+ (requested - lruHited) * MyConf.TRANS_ONE_FILE_NORM)
+					/ MyConf.UPDATE_PERIOD;
 			MyLog.jack("norm:" + normalBandwidth);
 			MyLog.jack("our :" + ourBandwidth);
-			MyLog.tagWriter(normalBandwidth + " " + ourBandwidth);
+			MyLog.tagWriter(
+					normalBandwidth + " " + ourBandwidth + " " + lruBandwidth);
 
 			//5.
 			lastUpdate = timestamp;
 			requested = 0;
 			replaced = 0;
 			hited = 0;
+			lruHited = 0;
 			v = 0;
 		}
 	}
@@ -165,11 +172,11 @@ public class CSPAgent
 	{
 		long newBslSize = bsl.updateSize();
 		MyConf.BSL_SIZE = newBslSize;
-		lruCache.updateSize(newBslSize);
+		//		lruCache.updateSize(newBslSize);
 		MyLog.jack(
 				"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~new BSL size: ");
 		MyLog.jack("" + newBslSize);
-//		System.out.println("new size: "+newBslSize);
+		//		System.out.println("new size: "+newBslSize);
 		MyLog.writeSize("" + newBslSize);
 	}
 

@@ -20,7 +20,7 @@ public class MyConf
 	public static long BSL_SIZE = 1 * 100 * 1024;
 //	public static long BSL_SIZE = 33790;
 	//unit:KiB
-	public static final int FILE_SIZE = 10 * 1024;
+	public static final int FILE_SIZE = 1 * 1024;
 	public static int TRANS_ONE_FILE_NORM = 0;
 	public static int TRANS_ONE_FILE_OUR = 0;
 	static {
