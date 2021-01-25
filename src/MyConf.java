@@ -3,6 +3,20 @@
  */
 public class MyConf
 {
+	/**
+	 * following are the logic switch
+	 */
+	public static final boolean IS_UPDATE_SIZE=true;
+	public static final String DATA_URL="";
+	public static final float CAL_SIZE_FACTOR=1.25F;
+	//temp work: the BSL size, unit:KB
+	//	public static long BSL_SIZE = 1 * 108 * 1024;
+	public static long BSL_SIZE = 1 * 300 * 1024;
+
+
+
+
+
 	public static String TAG = "";
 	public static final long UPDATE_PERIOD = 120;
 	public static final long REPORT_PERIOD = 20 * 60;
@@ -10,15 +24,11 @@ public class MyConf
 	public static final float POP_DECREASE = 0.95F;
 	//	p*=MyConf.POP_INCREASE;
 	public static final float POP_INCREASE = 1.05F;
-	public static final int V_SIZE = 20;
 
 	//the average life time is 1/lambda
 	public static float CANDI_EXPON_LAMBDA = 1F;
 	public static float BSL_EXPON_LAMBDA = .01F;
 	public static int LAMBDAINDICATOR = 0;
-	//temp work: the BSL size, unit:KB
-	//	public static long BSL_SIZE = 1 * 108 * 1024;
-	public static long BSL_SIZE = 1 * 120 * 1024;
 	//	public static long BSL_SIZE = 33790;
 	//unit:KiB
 	public static final int FILE_SIZE = 1 * 1024;

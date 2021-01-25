@@ -14,8 +14,11 @@ public class CSPAgent
 	private float p = 0.99F;
 	private int requested = 0;
 	private int replaced = 0;
-	private int hited = 0;
+	private int popHited = 0;
+	private long totalTransData = 0;
+	private long popReducedData = 0;
 	private int lruHited = 0;
+	private long lruReducedData = 0;
 	private int v = 0;
 
 	private LRUCache lruCache;
@@ -44,7 +47,7 @@ public class CSPAgent
 
 		boolean result = bsl.get(id, timestamp);
 		if (result)
-			hited++;
+			popHited++;
 		if (!result)
 		{
 			float candidate_pop = candidates.getPopulairty(id, timestamp);
@@ -145,24 +148,29 @@ public class CSPAgent
 			}
 			MyLog.jack("set p= " + p);
 
-			float normalBandwidth = (requested * MyConf.TRANS_ONE_FILE_NORM)
-					/ MyConf.UPDATE_PERIOD;
-			float ourBandwidth = (hited * MyConf.TRANS_ONE_FILE_OUR
-					+ (requested - hited) * MyConf.TRANS_ONE_FILE_NORM)
-					/ MyConf.UPDATE_PERIOD;
-			float lruBandwidth = (lruHited * MyConf.TRANS_ONE_FILE_OUR
-					+ (requested - lruHited) * MyConf.TRANS_ONE_FILE_NORM)
-					/ MyConf.UPDATE_PERIOD;
+			int normalTransData = (requested * MyConf.TRANS_ONE_FILE_NORM);
+			int popTransData = (popHited * MyConf.TRANS_ONE_FILE_OUR
+					+ (requested - popHited) * MyConf.TRANS_ONE_FILE_NORM);
+			int lruTransData = (lruHited * MyConf.TRANS_ONE_FILE_OUR
+					+ (requested - lruHited) * MyConf.TRANS_ONE_FILE_NORM);
+			float normalBandwidth = normalTransData / MyConf.UPDATE_PERIOD;
+			float ourBandwidth = popTransData / MyConf.UPDATE_PERIOD;
+			float lruBandwidth = lruTransData / MyConf.UPDATE_PERIOD;
+
+			totalTransData+=normalTransData;
+			popReducedData += ((normalTransData - popTransData));
+			lruReducedData += ((normalTransData - lruTransData));
 			MyLog.jack("norm:" + normalBandwidth);
 			MyLog.jack("our :" + ourBandwidth);
 			MyLog.tagWriter(
 					normalBandwidth + " " + ourBandwidth + " " + lruBandwidth);
 
+
 			//5.
 			lastUpdate = timestamp;
 			requested = 0;
 			replaced = 0;
-			hited = 0;
+			popHited = 0;
 			lruHited = 0;
 			v = 0;
 		}
@@ -185,6 +193,12 @@ public class CSPAgent
 	public void lruReport()
 	{
 		lruCache.report();
+	}
+
+	public void finalWriteResult(){
+		MyLog.writeResult("totalTransData"+totalTransData*1.0/1000000);
+		MyLog.writeResult("popReducedData"+popReducedData*1.0/1000000);
+		MyLog.writeResult("lruReducedData"+lruReducedData*1.0/1000000);
 	}
 
 	public void fianlLruReport()

@@ -64,11 +64,11 @@ public class Client
 		{
 			e.printStackTrace();
 		}
-		//		finalReport();
+		finalAction();
 
 	}
 
-	private void finalReport()
+	private void finalAction()
 	{
 		MyLog.logger.info("==========final report========");
 		if (totalRequest != 0)
@@ -79,7 +79,7 @@ public class Client
 					MyConf.TAG + " our " + (1.0F * totalHit / totalRequest));
 		}
 		MyLog.logger.info("==========final report========");
-		cds.fianlLruReport();
+		cds.fianlAction();
 	}
 
 	public void run()
@@ -94,7 +94,8 @@ public class Client
 		{
 			cds.report();
 
-			cds.updateBSL_LRU_size();
+			if (MyConf.IS_UPDATE_SIZE)
+				cds.updateBSL_LRU_size();
 
 			lastReport = timestamp;
 		}

@@ -15,9 +15,8 @@ public class Main
 		//for now, each generated file has about 1520000 different content in 3560000 requests
 		MyConf.TAG = "traceBandwidth";
 		MyLog.initTagWriter();
-		Client client = new Client(
-//				"/Users/pengjunkun/work/project/packetProject/data/5-4.csv");
-								"/Users/pengjunkun/Downloads/pythonProject/1.0.7.csv");
+		Client client = new Client(MyConf.DATA_URL);
+		//								"/Users/pengjunkun/Downloads/pythonProject/1.0.7.csv");
 		client.run();
 		MyLog.closeTagWriter();
 

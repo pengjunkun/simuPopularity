@@ -93,7 +93,7 @@ class MyCache
 		//		printAll();
 		moveToTail(node);
 		hited++;
-		printAll(key);
+//		printAll(key);
 		//		MyLog.writeMyHit("hit: " + hited);
 		return node.file;
 	}

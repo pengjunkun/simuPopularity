@@ -79,9 +79,10 @@ public class CDS
 		agent.lruReport();
 	}
 
-	public void fianlLruReport()
+	public void fianlAction()
 	{
 		agent.fianlLruReport();
+		agent.finalWriteResult();
 	}
 
 	public void updateBSL_LRU_size()
