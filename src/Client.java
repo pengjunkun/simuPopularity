@@ -50,6 +50,8 @@ public class Client
 			}
 			while (oneLine != null)
 			{
+//				String id = oneLine.split(",")[1];
+//				String timestamp = oneLine.split(",")[0];
 				String id = oneLine.split(",")[4];
 				String timestamp = oneLine.split(",")[1];
 				sendRequest(id, Long.parseLong(timestamp));

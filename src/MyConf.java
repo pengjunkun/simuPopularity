@@ -6,18 +6,16 @@ public class MyConf
 	/**
 	 * following are the logic switch
 	 */
-	public static final boolean IS_UPDATE_SIZE=true;
-	public static final String DATA_URL="";
-	public static final float CAL_SIZE_FACTOR=1.25F;
+	public static final boolean IS_UPDATE_SIZE = true;
+	//after change, please correct the parameter index in Client.java
+//	public static final String DATA_URL = "/Users/pengjunkun/Downloads/pythonProject/1.07.csv";
+	public static final String DATA_URL = "/Users/pengjunkun/work/project/packetProject/data/5-4.csv";
+	public static final float CAL_SIZE_FACTOR = 1.25F;
 	//temp work: the BSL size, unit:KB
-	//	public static long BSL_SIZE = 1 * 108 * 1024;
-	public static long BSL_SIZE = 1 * 300 * 1024;
+		public static long BSL_SIZE = 1 * 120 * 1024;
+//	public static long BSL_SIZE = 1 * 100 * 1024;
 
-
-
-
-
-	public static String TAG = "";
+	public static String TAG = "traceBandwidth";
 	public static final long UPDATE_PERIOD = 120;
 	public static final long REPORT_PERIOD = 20 * 60;
 	//	p*=MyConf.POP_DECREASE;
